@@ -38,7 +38,7 @@ def package():
         for path in bundled:
             archive.write(path, f'{plugin_id}/backend/' + path.relative_to(ROOT).as_posix())
     backend_files = [*python_files,
-                     ROOT / 'backend.py', ROOT / 'run_backend.py', ROOT / 'requirements.txt', ROOT / 'Dockerfile',
+                     ROOT / 'backend.py', ROOT / 'scripts/run_backend.py', ROOT / 'requirements.txt', ROOT / 'Dockerfile',
                      ROOT / '.dockerignore', ROOT / 'main.py', ROOT / 'docs' / 'OBSIDIAN_SETUP.md', ROOT / 'LICENSE',
                      ROOT / 'vault' / 'example.md']
     with ZipFile(output / f'markdown-quiz-backend-{version}.zip', 'w', ZIP_DEFLATED) as archive:
@@ -47,7 +47,7 @@ def package():
     backend_files += sorted(p for p in (ROOT / 'deployment').iterdir() if p.is_file() and p.name != '.env')
     source_files = [*backend_files, ROOT / 'docs' / 'ARCHITECTURE.md', ROOT / 'docs' / 'REFACTOR_NOTES.md',
                     ROOT / 'docs' / 'PROJECT_MAP.json', ROOT / 'README.md', ROOT / '.gitignore',
-                    ROOT / 'run_multiple_choice.py', ROOT / 'run_code_quiz.py', ROOT / 'scripts/reset_json.py',
+                    ROOT / 'scripts/run_multiple_choice.py', ROOT / 'scripts/run_code_quiz.py', ROOT / 'scripts/reset_json.py',
                     *sorted((ROOT / 'tests').glob('*.py')), *sorted((ROOT / 'scripts').glob('*.py')),
                     *sorted((ROOT / '.github' / 'workflows').glob('*.yml'))]
     source_files += [p for p in SOURCE.iterdir() if p.is_file() and p.suffix in ('.json', '.yaml', '.mjs', '.css', '.md')]

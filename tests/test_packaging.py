@@ -16,9 +16,9 @@ class PackagingTests(unittest.TestCase):
             root = Path(directory)
             frontend = root / 'obsidian_plugin'
             files = {
-                'backend.py': '# launcher', 'run_backend.py': '# launcher',
-                'main.py': '# launcher', 'run_multiple_choice.py': '# launcher',
-                'run_code_quiz.py': '# launcher', 'scripts/reset_json.py': '# launcher',
+                'backend.py': '# launcher', 'scripts/run_backend.py': '# launcher',
+                'main.py': '# launcher', 'scripts/run_multiple_choice.py': '# launcher',
+                'scripts/run_code_quiz.py': '# launcher', 'scripts/reset_json.py': '# launcher',
                 'requirements.txt': '', 'Dockerfile': '', '.dockerignore': '',
                 'LICENSE': '', 'README.md': '', '.gitignore': '',
                 'docs/OBSIDIAN_SETUP.md': '', 'docs/ARCHITECTURE.md': '',

@@ -51,8 +51,8 @@ dependencies are required. Use Python 3.11 or later.
 Three dedicated programs are available in this folder:
 
 ```powershell
-python run_multiple_choice.py
-python run_code_quiz.py
+python scripts/run_multiple_choice.py
+python scripts/run_code_quiz.py
 python scripts/reset_json.py
 ```
 
@@ -319,7 +319,7 @@ correct = backend.answer_term(question, 0)  # Index from the user's selected cho
 unrelated files. The HTTP adapter in `quiz_backend/api.py` exposes these
 operations to the Obsidian TypeScript plugin. It retains answer keys server-side
 and returns question IDs and choices. Start it with
-`python run_backend.py --vault /your/vault`.
+`python scripts/run_backend.py --vault /your/vault`.
 
 
 ### Library, API, and service controls (1.3.9)

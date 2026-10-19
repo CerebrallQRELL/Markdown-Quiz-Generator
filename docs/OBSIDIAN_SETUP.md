@@ -240,7 +240,7 @@ and restart/resume, then stops it. It needs Docker and the sandbox image. Run
 `pnpm build` and `pnpm test` in `obsidian_plugin` for frontend checks.
 
 
-- Backend offline: click Start backend, or start `run_backend.py` manually; check its URL and reconnect.
+- Backend offline: click Start backend, or start `scripts/run_backend.py` manually; check its URL and reconnect.
 - No terms: mark eligible terms #quiz and use Rescan vault.
 - No due questions: clear Due only.
 - Ollama unavailable: check `ollama list` and the configured model/server.
