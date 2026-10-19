@@ -10,7 +10,7 @@
       "cli": "main.py",
       "multiple_choice_cli": "run_multiple_choice.py",
       "coding_cli": "run_code_quiz.py",
-      "reset_saved_data": "reset_json.py",
+      "reset_saved_data": "scripts/reset_json.py",
       "http_backend": "run_backend.py",
       "obsidian_plugin_source": "obsidian_plugin/src/main.ts",
       "obsidian_installable_package": "plugin/markdown-quiz-generator/"
@@ -46,7 +46,7 @@
     "run_backend.py": "Starts the HTTP API backend with project-relative defaults.",
     "run_multiple_choice.py": "Direct launcher for multiple-choice term sessions.",
     "run_code_quiz.py": "Direct launcher for coding sessions.",
-    "reset_json.py": "Interactive reset utility for saved quiz collections, with backup behavior documented in README.",
+    "scripts/reset_json.py": "Interactive reset utility for saved quiz collections, with backup behavior documented in README.",
     "Dockerfile": "Container image definition for the standalone application.",
     ".dockerignore": "Files excluded from the application Docker build context.",
     ".gitignore": "Files excluded from Git tracking.",

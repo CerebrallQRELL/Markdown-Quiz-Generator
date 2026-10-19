@@ -18,7 +18,7 @@ class PackagingTests(unittest.TestCase):
             files = {
                 'backend.py': '# launcher', 'run_backend.py': '# launcher',
                 'main.py': '# launcher', 'run_multiple_choice.py': '# launcher',
-                'run_code_quiz.py': '# launcher', 'reset_json.py': '# launcher',
+                'run_code_quiz.py': '# launcher', 'scripts/reset_json.py': '# launcher',
                 'requirements.txt': '', 'Dockerfile': '', '.dockerignore': '',
                 'LICENSE': '', 'README.md': '', '.gitignore': '',
                 'docs/OBSIDIAN_SETUP.md': '', 'docs/ARCHITECTURE.md': '',

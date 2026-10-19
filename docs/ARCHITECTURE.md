@@ -30,7 +30,7 @@ Folders group related files; calls still go directly to the implementation.
 ```text
 updated project/
 |-- README.md, requirements.txt, Dockerfile
-|-- main.py, run_multiple_choice.py, run_code_quiz.py, reset_json.py
+|-- main.py, run_multiple_choice.py, run_code_quiz.py, scripts/reset_json.py
 |-- backend.py, run_backend.py             # Existing launch commands
 |-- quiz_backend/
 |   |-- __init__.py, __main__.py

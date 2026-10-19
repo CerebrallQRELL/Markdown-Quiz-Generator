@@ -53,11 +53,11 @@ Three dedicated programs are available in this folder:
 ```powershell
 python run_multiple_choice.py
 python run_code_quiz.py
-python reset_json.py
+python scripts/reset_json.py
 ```
 
 The quiz launchers go directly to their quiz and scan Markdown automatically when
-their JSON collection is empty. `reset_json.py` lets you choose term data, code
+their JSON collection is empty. `scripts/reset_json.py` lets you choose term data, code
 data, or both. Type `RESET` to confirm clearing generated questions, mastery,
 and history. It backs up the selected files in `data/reset-backup-*` first and
 preserves settings and Markdown notes. These scripts resolve default paths from
