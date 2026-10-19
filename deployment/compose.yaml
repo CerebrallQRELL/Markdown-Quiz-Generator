@@ -1,0 +1,27 @@
+name: markdown-quiz
+services:
+  ollama:
+    image: ollama/ollama:latest
+    restart: unless-stopped
+    volumes:
+      - models:/root/.ollama
+  backend:
+    build:
+      context: ..
+      dockerfile: deployment/Dockerfile
+    restart: unless-stopped
+    environment:
+      QUIZ_API_TOKEN: ${QUIZ_API_TOKEN:?Set a secret token in .env}
+      OLLAMA_URL: http://ollama:11434
+      OLLAMA_MODEL: ${OLLAMA_MODEL:-qwen2.5-coder:7b}
+      DATA_PATH: /data
+    ports:
+      - "127.0.0.1:8765:8765"
+    volumes:
+      - study:/data
+      - /var/run/docker.sock:/var/run/docker.sock
+    depends_on:
+      - ollama
+volumes:
+  models:
+  study:

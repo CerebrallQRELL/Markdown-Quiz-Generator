@@ -1,0 +1,6 @@
+*
+!Dockerfile
+!main.py
+!markdown_quiz/
+!markdown_quiz/**/
+!markdown_quiz/**/*.py
