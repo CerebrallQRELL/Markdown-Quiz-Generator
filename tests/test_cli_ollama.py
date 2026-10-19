@@ -6,9 +6,9 @@ import unittest
 from unittest.mock import Mock, patch
 from urllib.error import HTTPError, URLError
 
-from markdown_quiz.config import Settings
-from markdown_quiz.main import main
-from markdown_quiz.services.ollama import request_json
+from quiz_backend.config import Settings
+from quiz_backend.main import main
+from quiz_backend.services.ollama import request_json
 
 
 class CLITests(unittest.TestCase):
@@ -47,7 +47,7 @@ class OllamaTests(unittest.TestCase):
         opener = Mock()
         opener.open.return_value.__enter__ = Mock(return_value=response)
         opener.open.return_value.__exit__ = Mock(return_value=False)
-        with patch('markdown_quiz.services.ollama.build_opener', return_value=opener):
+        with patch('quiz_backend.services.ollama.build_opener', return_value=opener):
             result = request_json(Settings(ollama_model='local-model'), 'prompt', {'type': 'object'})
         self.assertEqual(result['wrong_answers'], ['a', 'b', 'c'])
         request = opener.open.call_args.args[0]
@@ -57,13 +57,13 @@ class OllamaTests(unittest.TestCase):
         self.assertFalse(payload['stream'])
 
     def test_unavailable(self):
-        with patch('markdown_quiz.services.ollama.build_opener') as opener:
+        with patch('quiz_backend.services.ollama.build_opener') as opener:
             opener.return_value.open.side_effect = URLError('offline')
             with self.assertRaisesRegex(RuntimeError, 'Ollama unavailable'):
                 request_json(Settings(), 'prompt', {})
 
     def test_missing_model_shows_server_error_and_recovery(self):
-        with patch('markdown_quiz.services.ollama.build_opener') as opener:
+        with patch('quiz_backend.services.ollama.build_opener') as opener:
             opener.return_value.open.side_effect = HTTPError('http://localhost:11434', 404,
                 'Not Found', {}, io.BytesIO(b'{"error":"model qwen3 not found"}'))
             with self.assertRaisesRegex(RuntimeError, 'model qwen3 not found.*ollama pull qwen3'):

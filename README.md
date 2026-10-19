@@ -19,16 +19,16 @@ the current project. The sibling `Coding Quiz Prototype` and
 `Multiple Choice Quiz Prototype` folders contain the earlier standalone projects.
 Generated downloads in `dist/`, installed plugin copies in `plugin/`, local data,
 credentials, logs, and dependencies are excluded from Git. Build the plugin with
-`pnpm --dir obsidian-markdown-quiz build`, then create downloads with
+`pnpm --dir obsidian_plugin build`, then create downloads with
 `python scripts/package_release.py`. GitHub also builds downloads through the
 **Build and release** workflow; pushing a version tag publishes release assets.
 
 See the [deployment and AI pipeline diagrams](docs/DIAGRAMS.md) for a visual overview.
 
-- `markdown_quiz/notes/`: Markdown parsing and saved records.
-- `markdown_quiz/quiz/`: selection, questions, sessions and spaced repetition.
-- `markdown_quiz/services/`: model providers and Docker execution.
-- `obsidian-markdown-quiz/src/`: `backend/`, `quiz/`, `views/` and `settings/`.
+- `quiz_backend/notes/`: Markdown parsing and saved records.
+- `quiz_backend/quiz/`: selection, questions, sessions and spaced repetition.
+- `quiz_backend/services/`: model providers and Docker execution.
+- `obsidian_plugin/src/`: `backend/`, `quiz/`, `views/` and `settings/`.
 - `docs/`: [architecture and source tree](docs/ARCHITECTURE.md),
   [Obsidian setup](docs/OBSIDIAN_SETUP.md), [refactor notes](docs/REFACTOR_NOTES.md)
   and the machine-readable `PROJECT_MAP.json`.
@@ -284,7 +284,7 @@ Remove-Item Env:RUN_DOCKER_TESTS
 
 | File | Purpose and important functions |
 | --- | --- |
-| `main.py` / `markdown_quiz/main.py` | Entry point and terminal presentation |
+| `main.py` / `quiz_backend/main.py` | Entry point and terminal presentation |
 | `config.py` | Settings defaults, environment overrides, validation and persistence |
 | `notes/parser.py` | `parse_markdown`, `scan_vault`, normalization and source hashes |
 | `notes/storage.py` | Saved-record validation, atomic JSON read/write and source synchronization |
@@ -303,10 +303,10 @@ Rows remain JSON-compatible dictionaries, documented by typed records. See
 Backend operations do not prompt or print:
 
 ```python
-from markdown_quiz.backend import QuizBackend
-from markdown_quiz.config import Settings
-from markdown_quiz.quiz.spaced_repetition import select_question
-from markdown_quiz.quiz.selection import filter_tags
+from quiz_backend.backend import QuizBackend
+from quiz_backend.config import Settings
+from quiz_backend.quiz.spaced_repetition import select_question
+from quiz_backend.quiz.selection import filter_tags
 
 backend = QuizBackend(Settings(vault_path="./vault", data_path="./data"))
 warnings = backend.rescan()
@@ -316,7 +316,7 @@ correct = backend.answer_term(question, 0)  # Index from the user's selected cho
 ```
 
 `backend.rescan(files=["chapter.md"])` provides a partial scan without deactivating
-unrelated files. The HTTP adapter in `markdown_quiz/api.py` exposes these
+unrelated files. The HTTP adapter in `quiz_backend/api.py` exposes these
 operations to the Obsidian TypeScript plugin. It retains answer keys server-side
 and returns question IDs and choices. Start it with
 `python run_backend.py --vault /your/vault`.

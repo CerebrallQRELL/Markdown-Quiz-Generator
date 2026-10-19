@@ -4,14 +4,14 @@ import subprocess
 import unittest
 from unittest.mock import Mock, patch
 
-from markdown_quiz.config import Settings
-from markdown_quiz.services.sandbox import run_in_sandbox
+from quiz_backend.config import Settings
+from quiz_backend.services.sandbox import run_in_sandbox
 
 
 class SandboxPolicyTests(unittest.TestCase):
-    @patch('markdown_quiz.services.sandbox.shutil.which', return_value='docker')
-    @patch('markdown_quiz.services.sandbox.subprocess.run')
-    @patch('markdown_quiz.services.sandbox.subprocess.Popen')
+    @patch('quiz_backend.services.sandbox.shutil.which', return_value='docker')
+    @patch('quiz_backend.services.sandbox.subprocess.run')
+    @patch('quiz_backend.services.sandbox.subprocess.Popen')
     def test_policy_and_cleanup(self, popen, run, which):
         run.side_effect = [subprocess.CompletedProcess([], 0, 'id', ''),
                            subprocess.CompletedProcess([], 0, 'exited 0', ''),
@@ -33,9 +33,9 @@ class SandboxPolicyTests(unittest.TestCase):
             self.assertTrue(all(call.kwargs['creationflags'] == subprocess.CREATE_NO_WINDOW for call in run.call_args_list))
         self.assertEqual(run.call_args_list[-1].args[0][1:3], ['rm', '--force'])
 
-    @patch('markdown_quiz.services.sandbox.shutil.which', return_value='docker')
-    @patch('markdown_quiz.services.sandbox.subprocess.run')
-    @patch('markdown_quiz.services.sandbox.subprocess.Popen')
+    @patch('quiz_backend.services.sandbox.shutil.which', return_value='docker')
+    @patch('quiz_backend.services.sandbox.subprocess.run')
+    @patch('quiz_backend.services.sandbox.subprocess.Popen')
     def test_timeout_removes_container(self, popen, run, which):
         run.return_value = subprocess.CompletedProcess([], 0, '', '')
         process = Mock(stdin=io.BytesIO(), stdout=io.BytesIO(), stderr=io.BytesIO())

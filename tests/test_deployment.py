@@ -9,11 +9,11 @@ from http.server import ThreadingHTTPServer
 from urllib.request import Request, urlopen
 from urllib.error import HTTPError
 
-from markdown_quiz.api import APIError, QuizAPI, make_handler
-from markdown_quiz.backend import QuizBackend
-from markdown_quiz.config import Settings
-from markdown_quiz.quiz import questions
-from markdown_quiz.services.sandbox import RunResult
+from quiz_backend.api import APIError, QuizAPI, make_handler
+from quiz_backend.backend import QuizBackend
+from quiz_backend.config import Settings
+from quiz_backend.quiz import questions
+from quiz_backend.services.sandbox import RunResult
 
 
 class DeploymentTests(unittest.TestCase):
@@ -30,7 +30,7 @@ class DeploymentTests(unittest.TestCase):
         return self.vault.dispatch('POST', '/sync/file', dict(source_file=path, content=content, **extra))
 
     def test_vault_libraries_restore_without_affecting_other_vaults(self):
-        with patch('markdown_quiz.api.install_libraries', return_value=('quiz:custom', 'numpy')):
+        with patch('quiz_backend.api.install_libraries', return_value=('quiz:custom', 'numpy')):
             self.vault.dispatch('POST', '/libraries', {'packages': 'numpy'})
         restored = QuizAPI(QuizBackend(self.settings), managed=True)
         connection = restored.connect_vault({'vault_key': 'my-private-key'})
@@ -84,7 +84,7 @@ class DeploymentTests(unittest.TestCase):
         row['wrong_answers'] = ['Wrong one', 'Wrong two', 'Wrong three']
         self.vault.backend.save('term')
         reloaded = QuizBackend(self.vault.backend.settings)
-        with patch('markdown_quiz.quiz.term_quiz.generate_wrong_answers', side_effect=AssertionError('Should use JSON')):
+        with patch('quiz_backend.quiz.term_quiz.generate_wrong_answers', side_effect=AssertionError('Should use JSON')):
             question = reloaded.term_question(reloaded.terms[0], 'forward')
         self.assertEqual(len(question['choices']), 4)
 
@@ -128,7 +128,7 @@ class DeploymentTests(unittest.TestCase):
             self.assertTrue(questions.grade_coding(q, q['solutions'], self.settings)['correct'])
         with self.assertRaisesRegex(ValueError, 'Program input'):
             questions.coding_instance({'original_code': source}, self.settings, 'easy', stdin_text='5\n')
-        from markdown_quiz.services.sandbox import run_in_sandbox
+        from quiz_backend.services.sandbox import run_in_sandbox
         result = run_in_sandbox('import sys\nprint(sys.stdin.buffer.read().decode())', self.settings, stdin_text='café')
         self.assertEqual(result.stdout, 'café\n')
 

@@ -9,7 +9,7 @@ from urllib.request import Request, urlopen
 from pathlib import Path
 import sys
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from markdown_quiz.services.sandbox import hidden_process_options
+from quiz_backend.services.sandbox import hidden_process_options
 
 name = 'markdown-quiz-server-test-' + uuid.uuid4().hex
 secret = secrets.token_hex(32)

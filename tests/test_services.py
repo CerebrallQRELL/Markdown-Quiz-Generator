@@ -5,11 +5,11 @@ import unittest
 from unittest.mock import patch
 from urllib.error import HTTPError
 
-from markdown_quiz.api import QuizAPI, APIError
-from markdown_quiz.backend import QuizBackend
-from markdown_quiz.config import Settings, save_settings
-from markdown_quiz.services.cloud import request_json, validate_endpoint
-from markdown_quiz.services.sandbox import RunResult
+from quiz_backend.api import QuizAPI, APIError
+from quiz_backend.backend import QuizBackend
+from quiz_backend.config import Settings, save_settings
+from quiz_backend.services.cloud import request_json, validate_endpoint
+from quiz_backend.services.sandbox import RunResult
 
 
 class ServiceTests(unittest.TestCase):
@@ -26,7 +26,7 @@ class ServiceTests(unittest.TestCase):
         self.api = QuizAPI(QuizBackend(self.settings))
         self.api.dispatch('POST', '/sync', {})
 
-    @patch('markdown_quiz.services.cloud.build_opener')
+    @patch('quiz_backend.services.cloud.build_opener')
     def test_api_request_and_safe_errors(self, opener):
         opener.return_value.open.return_value.__enter__.return_value.read.return_value = json.dumps(
             {'choices': [{'message': {'content': '{"wrong_answers": ["a", "b", "c"]}'}}]}).encode()
@@ -77,9 +77,9 @@ class ServiceTests(unittest.TestCase):
         with self.assertRaises(APIError):
             self.api.dispatch('POST', '/admin/reset', dict(target='unknown'))
 
-    @patch('markdown_quiz.api.run_in_sandbox')
-    @patch('markdown_quiz.api.check_sandbox_available')
-    @patch('markdown_quiz.api.install_libraries', return_value=('new-image', 'numpy'))
+    @patch('quiz_backend.api.run_in_sandbox')
+    @patch('quiz_backend.api.check_sandbox_available')
+    @patch('quiz_backend.api.install_libraries', return_value=('new-image', 'numpy'))
     def test_sandbox_reset_commits_only_after_verification(self, install, check, run):
         original = self.settings.sandbox_image
         run.return_value = RunResult(exit_code=1)
@@ -90,7 +90,7 @@ class ServiceTests(unittest.TestCase):
         self.api.dispatch('POST', '/admin/reset', dict(target='sandbox'))
         self.assertEqual(self.settings.sandbox_image, 'new-image')
 
-    @patch('markdown_quiz.api.build_opener')
+    @patch('quiz_backend.api.build_opener')
     def test_ollama_reset_only_unloads_requested_model(self, opener):
         self.api.dispatch('POST', '/admin/reset', dict(target='ollama', model='local-model'))
         request = opener.return_value.open.call_args.args[0]

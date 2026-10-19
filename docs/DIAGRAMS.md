@@ -55,8 +55,8 @@ flowchart TB
 - The standalone terminal CLI uses the same Python modules, model services,
   JSON storage and sandbox. It can also run in the root Dockerfile's CLI image.
 
-Sources: `deployment/compose.yaml`, both Dockerfiles, `markdown_quiz/api.py`,
-`markdown_quiz/services/sandbox.py` and `obsidian-markdown-quiz/src/main.ts`.
+Sources: `deployment/compose.yaml`, both Dockerfiles, `quiz_backend/api.py`,
+`quiz_backend/services/sandbox.py` and `obsidian_plugin/src/main.ts`.
 
 ## AI and question-generation pipeline
 
@@ -108,4 +108,4 @@ the student. Exhausted model retries surface an error for retry/skip handling.
 
 Sources: `notes/parser.py`, `quiz/selection.py`, `quiz/term_quiz.py`,
 `quiz/questions.py`, `quiz/code_quiz.py`, `quiz/engine.py` and
-`services/ollama.py` / `services/cloud.py` within `markdown_quiz/`.
+`services/ollama.py` / `services/cloud.py` within `quiz_backend/`.

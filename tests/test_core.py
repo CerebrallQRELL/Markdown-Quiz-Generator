@@ -3,9 +3,9 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
-from markdown_quiz.notes.parser import parse_markdown, scan_vault, normalize_code
-from markdown_quiz.notes.storage import sync_terms, read_json, write_json, reset_quiz_data
-from markdown_quiz.quiz.spaced_repetition import record_answer, review_time
+from quiz_backend.notes.parser import parse_markdown, scan_vault, normalize_code
+from quiz_backend.notes.storage import sync_terms, read_json, write_json, reset_quiz_data
+from quiz_backend.quiz.spaced_repetition import record_answer, review_time
 
 
 class CoreTests(unittest.TestCase):

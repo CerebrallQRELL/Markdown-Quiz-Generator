@@ -5,7 +5,7 @@ import shutil
 from zipfile import ZipFile, ZIP_DEFLATED
 
 ROOT = Path(__file__).resolve().parents[1]
-SOURCE = ROOT / 'obsidian-markdown-quiz'
+SOURCE = ROOT / 'obsidian_plugin'
 
 
 def package():
@@ -17,11 +17,11 @@ def package():
     install.mkdir(parents=True, exist_ok=True)
     for name in ('main.js', 'manifest.json', 'styles.css'):
         shutil.copy2(SOURCE / name, install / name)
-    python_files = sorted((ROOT / 'markdown_quiz').rglob('*.py'))
+    python_files = sorted((ROOT / 'quiz_backend').rglob('*.py'))
     bundled = [ROOT / 'backend.py', *python_files]
     # Remove files shipped by the old flat layout, while preserving runtime data.
-    package_root = install / 'backend' / 'markdown_quiz'
-    expected = {path.relative_to(ROOT / 'markdown_quiz') for path in python_files}
+    package_root = install / 'backend' / 'quiz_backend'
+    expected = {path.relative_to(ROOT / 'quiz_backend') for path in python_files}
     if package_root.exists():
         for previous in package_root.rglob('*.py'):
             if previous.relative_to(package_root) not in expected:

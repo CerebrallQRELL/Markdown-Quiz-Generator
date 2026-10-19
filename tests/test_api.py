@@ -8,10 +8,10 @@ from http.server import ThreadingHTTPServer
 from urllib.error import HTTPError
 from urllib.request import Request, urlopen
 
-from markdown_quiz.api import APIError, QuizAPI, make_handler
-from markdown_quiz.backend import QuizBackend
-from markdown_quiz.config import Settings
-from markdown_quiz.notes.parser import parse_markdown, digest, normalize_code
+from quiz_backend.api import APIError, QuizAPI, make_handler
+from quiz_backend.backend import QuizBackend
+from quiz_backend.config import Settings
+from quiz_backend.notes.parser import parse_markdown, digest, normalize_code
 
 
 class APITests(unittest.TestCase):
@@ -29,11 +29,11 @@ class APITests(unittest.TestCase):
         return self.api.dispatch('POST', path, data or {})
 
     def test_library_settings_persist_and_failed_install_keeps_previous_image(self):
-        with patch('markdown_quiz.api.install_libraries', return_value=('quiz:test', 'numpy')):
+        with patch('quiz_backend.api.install_libraries', return_value=('quiz:test', 'numpy')):
             self.assertEqual(self.call('/libraries', {'packages': 'numpy'}), {'packages': 'numpy'})
         self.assertEqual(self.api.backend.settings.sandbox_image, 'quiz:test')
         self.assertEqual(self.api.dispatch('GET', '/libraries', {}), {'packages': 'numpy'})
-        with patch('markdown_quiz.api.install_libraries', side_effect=RuntimeError('No matching distribution')):
+        with patch('quiz_backend.api.install_libraries', side_effect=RuntimeError('No matching distribution')):
             with self.assertRaisesRegex(APIError, 'No matching distribution'):
                 self.call('/libraries', {'packages': 'badpackage'})
         self.assertEqual(self.api.backend.settings.sandbox_image, 'quiz:test')
@@ -94,7 +94,7 @@ class APITests(unittest.TestCase):
             with self.assertRaises(APIError):
                 self.call('/sync/file', dict(source_file=value))
         self.note.write_text('One:: Changed', encoding='utf-8')
-        with patch('markdown_quiz.backend.generate_wrong_answers') as generate:
+        with patch('quiz_backend.backend.generate_wrong_answers') as generate:
             self.call('/sync/file', dict(source_file='note.md'))
             generate.assert_not_called()
 
@@ -103,7 +103,7 @@ class APITests(unittest.TestCase):
         row.update(generated_code='print(2)', blank_code='print(<BLANK>)', answer='2',
                    expected_output='2\n', generation_hash='hash', difficulty='medium')
         self.api.backend.save('code')
-        with patch('markdown_quiz.quiz.questions.run_in_sandbox', return_value=__import__('markdown_quiz.services.sandbox', fromlist=['RunResult']).RunResult(stdout='2\n', exit_code=0)), patch('markdown_quiz.backend.generate_code_quiz') as generate:
+        with patch('quiz_backend.quiz.questions.run_in_sandbox', return_value=__import__('quiz_backend.services.sandbox', fromlist=['RunResult']).RunResult(stdout='2\n', exit_code=0)), patch('quiz_backend.backend.generate_code_quiz') as generate:
             question = self.call('/quiz/code/get', dict(source_file='note.md', code_hash=digest(normalize_code('print(1)')), occurrence=1))
             generate.assert_not_called()
         self.assertNotIn('answer', question)

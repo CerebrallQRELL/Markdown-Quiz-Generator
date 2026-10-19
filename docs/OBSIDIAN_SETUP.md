@@ -203,7 +203,7 @@ automatic vault connection.
 Use Node 24+, pnpm 11.25.0, and Python 3.11+:
 
 ```sh
-cd obsidian-markdown-quiz
+cd obsidian_plugin
 pnpm install --frozen-lockfile
 pnpm build
 pnpm test
@@ -237,7 +237,7 @@ python scripts/smoke_release.py
 
 The packaged smoke test starts a hidden temporary backend, tests both quiz types
 and restart/resume, then stops it. It needs Docker and the sandbox image. Run
-`pnpm build` and `pnpm test` in `obsidian-markdown-quiz` for frontend checks.
+`pnpm build` and `pnpm test` in `obsidian_plugin` for frontend checks.
 
 
 - Backend offline: click Start backend, or start `run_backend.py` manually; check its URL and reconnect.

@@ -2,10 +2,10 @@ import subprocess
 import unittest
 from unittest.mock import patch
 
-from markdown_quiz.services.libraries import package_names, install_libraries
-from markdown_quiz.quiz.questions import validate_imports, coding_instance, grade_coding
-from markdown_quiz.config import Settings
-from markdown_quiz.services.sandbox import RunResult
+from quiz_backend.services.libraries import package_names, install_libraries
+from quiz_backend.quiz.questions import validate_imports, coding_instance, grade_coding
+from quiz_backend.config import Settings
+from quiz_backend.services.sandbox import RunResult
 
 
 class LibraryTests(unittest.TestCase):
@@ -19,8 +19,8 @@ class LibraryTests(unittest.TestCase):
             else:
                 with self.assertRaises(ValueError): package_names(value)
 
-    @patch('markdown_quiz.services.libraries.shutil.which', return_value='docker')
-    @patch('markdown_quiz.services.libraries.subprocess.run')
+    @patch('quiz_backend.services.libraries.shutil.which', return_value='docker')
+    @patch('quiz_backend.services.libraries.subprocess.run')
     def test_install_builds_separate_image_and_reports_failure(self, run, which):
         run.side_effect = [subprocess.CompletedProcess([], 0, '', ''), subprocess.CompletedProcess([], 0, 'sha256:' + 'a' * 64, '')]
         image, packages = install_libraries('numpy, pandas')
@@ -35,7 +35,7 @@ class LibraryTests(unittest.TestCase):
         with self.assertRaisesRegex(RuntimeError, 'No matching distribution'):
             install_libraries('nonexistent')
 
-    @patch('markdown_quiz.services.libraries.subprocess.run')
+    @patch('quiz_backend.services.libraries.subprocess.run')
     def test_empty_packages_uses_default_without_install(self, run):
         self.assertEqual(install_libraries(''), ('python:3.13-alpine', ''))
         run.assert_not_called()

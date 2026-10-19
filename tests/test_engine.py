@@ -6,11 +6,11 @@ from tempfile import TemporaryDirectory
 import unittest
 from unittest.mock import patch
 
-from markdown_quiz.backend import QuizBackend
-from markdown_quiz.config import Settings
-from markdown_quiz.quiz.engine import QuizEngine
-from markdown_quiz.quiz import questions
-from markdown_quiz.services.sandbox import RunResult, hidden_process_options
+from quiz_backend.backend import QuizBackend
+from quiz_backend.config import Settings
+from quiz_backend.quiz.engine import QuizEngine
+from quiz_backend.quiz import questions
+from quiz_backend.services.sandbox import RunResult, hidden_process_options
 
 
 class EngineTests(unittest.TestCase):
@@ -29,7 +29,7 @@ class EngineTests(unittest.TestCase):
             row['wrong_answers'] = ['Wrong A', 'Wrong B', 'Wrong C']
         self.backend.save('term')
         self.engine = QuizEngine(self.backend)
-        self.runner = patch('markdown_quiz.quiz.questions.run_in_sandbox', return_value=RunResult(stdout='9\n', exit_code=0))
+        self.runner = patch('quiz_backend.quiz.questions.run_in_sandbox', return_value=RunResult(stdout='9\n', exit_code=0))
         self.runner.start(); self.addCleanup(self.runner.stop)
 
     def start(self, **extra):
@@ -44,7 +44,7 @@ class EngineTests(unittest.TestCase):
         self.backend.rescan(regenerate_changed=False)
         def execute(code, settings):
             return RunResult(stdout='2\n' if 'print' in code else '', exit_code=0)
-        with patch('markdown_quiz.quiz.questions.run_in_sandbox', side_effect=execute):
+        with patch('quiz_backend.quiz.questions.run_in_sandbox', side_effect=execute):
             state = self.engine.start(dict(quiz_type='coding', direction='source', length=2))
             self.assertEqual(state['index'], 0)
             self.assertEqual(state['total'], 2)
@@ -61,7 +61,7 @@ class EngineTests(unittest.TestCase):
             self.assertEqual(resumed['notice'], state['notice'])
 
     def test_all_silent_code_completes_without_attempt_or_loop(self):
-        with patch('markdown_quiz.quiz.questions.run_in_sandbox', return_value=RunResult(exit_code=0)):
+        with patch('quiz_backend.quiz.questions.run_in_sandbox', return_value=RunResult(exit_code=0)):
             for length in (1, 'all', 'until'):
                 state = self.engine.start(dict(quiz_type='coding', direction='source', length=length))
                 self.assertTrue(state['complete'])
@@ -74,7 +74,7 @@ class EngineTests(unittest.TestCase):
         self.backend.rescan(regenerate_changed=False)
         def execute(code, settings):
             return RunResult(stderr='ValueError: broken', exit_code=1) if 'raise' in code else RunResult(stdout='1\n', exit_code=0)
-        with patch('markdown_quiz.quiz.questions.run_in_sandbox', side_effect=execute):
+        with patch('quiz_backend.quiz.questions.run_in_sandbox', side_effect=execute):
             state = self.engine.start(dict(quiz_type='coding', direction='source', length=2))
             self.assertIn('Skipped 1 invalid', state['notice'])
             state = self.engine.operate('skip', dict(session_id=state['session_id']))
@@ -84,7 +84,7 @@ class EngineTests(unittest.TestCase):
             self.assertEqual(state['progress']['answered'], 1)
 
     def test_all_errors_complete_without_attempts(self):
-        with patch('markdown_quiz.quiz.questions.run_in_sandbox', return_value=RunResult(stderr='ValueError: broken', exit_code=1)):
+        with patch('quiz_backend.quiz.questions.run_in_sandbox', return_value=RunResult(stderr='ValueError: broken', exit_code=1)):
             state = self.engine.start(dict(quiz_type='coding', direction='source', length='until'))
             self.assertTrue(state['complete'])
             self.assertEqual(state['progress']['answered'], 0)
@@ -96,7 +96,7 @@ class EngineTests(unittest.TestCase):
             if 'input()' in code and not stdin_text:
                 return RunResult(stderr='EOFError: EOF when reading a line', exit_code=1)
             return RunResult(stdout=stdin_text or '2\n', exit_code=0)
-        with patch('markdown_quiz.quiz.questions.run_in_sandbox', side_effect=execute):
+        with patch('quiz_backend.quiz.questions.run_in_sandbox', side_effect=execute):
             state = self.engine.start(dict(quiz_type='coding', direction='source', length=2, stdin_text='stale'))
             q = state['question']
             self.assertTrue(q['needs_input'])
@@ -119,7 +119,7 @@ class EngineTests(unittest.TestCase):
         self.assertEqual(state['question']['difficulty'], 'easy')
 
     def test_failed_generation_can_be_skipped_or_retried_after_resume(self):
-        with patch('markdown_quiz.quiz.questions.run_in_sandbox', side_effect=RuntimeError('Docker unavailable')):
+        with patch('quiz_backend.quiz.questions.run_in_sandbox', side_effect=RuntimeError('Docker unavailable')):
             state = self.engine.start(dict(quiz_type='coding', direction='source', length=2))
         self.assertFalse(state['complete'])
         self.assertIsNone(state['question'])
@@ -133,14 +133,14 @@ class EngineTests(unittest.TestCase):
         self.assertFalse(state['preparation_error'])
         self.assertEqual(state['progress']['answered'], 0)
 
-        with patch('markdown_quiz.quiz.questions.run_in_sandbox', side_effect=RuntimeError('Docker unavailable')):
+        with patch('quiz_backend.quiz.questions.run_in_sandbox', side_effect=RuntimeError('Docker unavailable')):
             state = self.engine.start(dict(quiz_type='coding', direction='source', length=1))
         state = self.engine.operate('retry', dict(session_id=state['session_id']))
         self.assertEqual(state['index'], 0)
         self.assertIsNotNone(state['question'])
 
     def test_consecutive_preparation_errors_can_be_skipped_to_completion(self):
-        with patch('markdown_quiz.quiz.questions.run_in_sandbox', side_effect=RuntimeError('Docker unavailable')):
+        with patch('quiz_backend.quiz.questions.run_in_sandbox', side_effect=RuntimeError('Docker unavailable')):
             state = self.engine.start(dict(quiz_type='coding', direction='source', length=2))
             state = self.engine.operate('skip', dict(session_id=state['session_id']))
             self.assertFalse(state['complete'])

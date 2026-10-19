@@ -1,5 +1,5 @@
 """Launch the CLI from this project directory."""
-from markdown_quiz.main import main
+from quiz_backend.main import main
 
 if __name__ == '__main__':
     raise SystemExit(main())

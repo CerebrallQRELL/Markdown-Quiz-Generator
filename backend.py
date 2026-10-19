@@ -1,5 +1,5 @@
 """Launch the local Obsidian quiz backend."""
-from markdown_quiz.api import main
+from quiz_backend.api import main
 
 if __name__ == "__main__":
     main()

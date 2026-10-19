@@ -82,7 +82,7 @@ semantics, or release scripts. Do not merge those to reduce file count.
 
 ## Removed, merged and renamed inventory
 
-**Deleted source file:** `obsidian-markdown-quiz/src/models.ts`.
+**Deleted source file:** `obsidian_plugin/src/models.ts`.
 
 **Merged:** model preference functions into `modelPicker.ts`; selection functions
 from `quiz/questions.py` and `quiz/term_quiz.py` into `quiz/selection.py`; duplicated frontend
@@ -172,17 +172,17 @@ Grouped 29 existing files into shallow folders, without adding call layers:
 
 | Folder | Contents |
 | --- | --- |
-| `markdown_quiz/notes/` | Parser and JSON storage/synchronization. |
-| `markdown_quiz/quiz/` | Session engine, selection, multiple-choice/coding construction and review scheduling. |
-| `markdown_quiz/services/` | Ollama/cloud clients, Docker execution and optional libraries. |
-| `obsidian-markdown-quiz/src/backend/` | HTTP client and version checks. |
-| `obsidian-markdown-quiz/src/quiz/` | Session controller and filter controls. |
-| `obsidian-markdown-quiz/src/views/` | Sidebar, inline placement, question rendering and protected code blanks. |
-| `obsidian-markdown-quiz/src/settings/` | Settings, models, libraries and service controls. |
+| `quiz_backend/notes/` | Parser and JSON storage/synchronization. |
+| `quiz_backend/quiz/` | Session engine, selection, multiple-choice/coding construction and review scheduling. |
+| `quiz_backend/services/` | Ollama/cloud clients, Docker execution and optional libraries. |
+| `obsidian_plugin/src/backend/` | HTTP client and version checks. |
+| `obsidian_plugin/src/quiz/` | Session controller and filter controls. |
+| `obsidian_plugin/src/views/` | Sidebar, inline placement, question rendering and protected code blanks. |
+| `obsidian_plugin/src/settings/` | Settings, models, libraries and service controls. |
 | `docs/` | Architecture, Obsidian setup, this report and the source map. |
 
-Root launchers, `markdown_quiz.api`, `markdown_quiz.main`, `markdown_quiz.backend`
-and `markdown_quiz.config` remain in place. CLI commands and HTTP endpoints are
+Root launchers, `quiz_backend.api`, `quiz_backend.main`, `quiz_backend.backend`
+and `quiz_backend.config` remain in place. CLI commands and HTTP endpoints are
 unchanged. Internal Python/TypeScript imports and test mock targets now use the
 new folders directly; no alias registry or forwarding package was introduced.
 The three Python subpackage markers contain only a short responsibility docstring.

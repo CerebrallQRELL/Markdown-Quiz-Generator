@@ -5,13 +5,13 @@ from tempfile import TemporaryDirectory
 import unittest
 from unittest.mock import Mock, patch
 
-from markdown_quiz.backend import QuizBackend
-from markdown_quiz.quiz.code_quiz import create_blank, generate_code_quiz, generation_hash, grade_answer, validate_candidate
-from markdown_quiz.config import Settings, load_settings
-from markdown_quiz.notes.parser import parse_markdown
-from markdown_quiz.services.sandbox import RunResult, run_in_sandbox
-from markdown_quiz.notes.storage import sync_terms, sync_records
-from markdown_quiz.quiz.term_quiz import build_question, filter_tags, generate_wrong_answers
+from quiz_backend.backend import QuizBackend
+from quiz_backend.quiz.code_quiz import create_blank, generate_code_quiz, generation_hash, grade_answer, validate_candidate
+from quiz_backend.config import Settings, load_settings
+from quiz_backend.notes.parser import parse_markdown
+from quiz_backend.services.sandbox import RunResult, run_in_sandbox
+from quiz_backend.notes.storage import sync_terms, sync_records
+from quiz_backend.quiz.term_quiz import build_question, filter_tags, generate_wrong_answers
 
 
 class TermTests(unittest.TestCase):
@@ -143,7 +143,7 @@ class BackendTests(unittest.TestCase):
             backend.terms[0]['mastery'] = 5
             backend.save('term')
             note.write_text('Cell:: Changed', encoding='utf-8')
-            with patch('markdown_quiz.backend.generate_wrong_answers') as generate:
+            with patch('quiz_backend.backend.generate_wrong_answers') as generate:
                 backend.rescan()
                 generate.assert_called_once()
             restored = QuizBackend(settings)
@@ -156,7 +156,7 @@ class BackendTests(unittest.TestCase):
         with TemporaryDirectory() as directory:
             backend = QuizBackend(Settings(data_path=directory))
             row = dict(generation_hash='cached', difficulty='easy')
-            with patch('markdown_quiz.backend.generate_code_quiz') as generate:
+            with patch('quiz_backend.backend.generate_code_quiz') as generate:
                 self.assertIs(backend.code_question(row, 'easy'), row)
                 generate.assert_not_called()
 
@@ -167,7 +167,7 @@ class BackendTests(unittest.TestCase):
             self.assertEqual(settings.data_path, directory)
 
     def test_missing_docker(self):
-        with patch('markdown_quiz.services.sandbox.shutil.which', return_value=None):
+        with patch('quiz_backend.services.sandbox.shutil.which', return_value=None):
             with self.assertRaisesRegex(RuntimeError, 'Docker not installed'):
                 run_in_sandbox('print(2)', Settings())
 

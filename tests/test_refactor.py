@@ -5,15 +5,15 @@ from tempfile import TemporaryDirectory
 import unittest
 from unittest.mock import Mock, patch
 
-from markdown_quiz.backend import QuizBackend
-from markdown_quiz.config import Settings
-from markdown_quiz.quiz.engine import QuizEngine
-from markdown_quiz.notes.parser import parse_markdown
-from markdown_quiz.quiz.questions import InvalidQuestionError, NoOutputError, coding_instance
-from markdown_quiz.services.sandbox import RunResult
-from markdown_quiz.quiz.selection import eligible, filter_questions, filter_tags
-from markdown_quiz.notes.storage import load_records, read_json, sync_terms, write_json
-from markdown_quiz.quiz.term_quiz import build_question
+from quiz_backend.backend import QuizBackend
+from quiz_backend.config import Settings
+from quiz_backend.quiz.engine import QuizEngine
+from quiz_backend.notes.parser import parse_markdown
+from quiz_backend.quiz.questions import InvalidQuestionError, NoOutputError, coding_instance
+from quiz_backend.services.sandbox import RunResult
+from quiz_backend.quiz.selection import eligible, filter_questions, filter_tags
+from quiz_backend.notes.storage import load_records, read_json, sync_terms, write_json
+from quiz_backend.quiz.term_quiz import build_question
 
 
 class RefactorTests(unittest.TestCase):
@@ -33,7 +33,7 @@ class RefactorTests(unittest.TestCase):
         self.assertEqual(blocks[0]['original_code'], 'print("café")')
 
     def test_old_filter_imports_are_the_same_functions(self):
-        from markdown_quiz.quiz import questions, term_quiz
+        from quiz_backend.quiz import questions, term_quiz
         self.assertIs(questions.matching, filter_questions)
         self.assertIs(questions.eligible, eligible)
         self.assertIs(term_quiz.filter_tags, filter_tags)
@@ -71,7 +71,7 @@ class RefactorTests(unittest.TestCase):
                 row['wrong_answers'] = ['Wrong one', 'Wrong two', 'Wrong three']
             backend.save('term')
             engine = QuizEngine(backend)
-            with patch('markdown_quiz.quiz.term_quiz.generate_wrong_answers', side_effect=AssertionError('Cached quiz')):
+            with patch('quiz_backend.quiz.term_quiz.generate_wrong_answers', side_effect=AssertionError('Cached quiz')):
                 state = engine.start(dict(direction='forward', length='all'))
                 queue = engine.sessions[state['session_id']]['queue'].copy()
                 for identity in queue:
@@ -116,7 +116,7 @@ class RefactorTests(unittest.TestCase):
             return RunResult(stdout='1\n' if code == 'print(1)' else '2\n', exit_code=0)
         damaged_blank = dict(blank_code='print(<BLANK_1>)', blanks=[{'id': 'blank_1', 'marker': '<BLANK_1>'}],
                              solutions={'blank_1': '2'})
-        with patch('markdown_quiz.quiz.questions.make_blanks', return_value=damaged_blank):
+        with patch('quiz_backend.quiz.questions.make_blanks', return_value=damaged_blank):
             with self.assertRaisesRegex(InvalidQuestionError, 'different output'):
                 coding_instance({'original_code': 'print(1)'}, Settings(), 'easy', runner=runner)
 
